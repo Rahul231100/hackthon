@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmHealth AI - Disease Diagnostic Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Color Scheme */
+        :root {
+            --primary-green: #2E7D32;
+            --secondary-green: #81C784;
+            --dark-green: #1B5E20;
+            --earth-brown: #5D4037;
+            --sky-blue: #0288D1;
+            --warning-red: #D32F2F;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --dark-gray: #212121;
+            --text-primary: #263238;
+            --text-secondary: #546E7A;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Auth Pages Container */
+        .auth-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            display: none;
+        }
+
+        .auth-left-content {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-left h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-left p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .auth-features {
+            margin-top: 2rem;
+        }
+
+        .auth-feature {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-feature-icon {
+            background-color: var(--primary-green);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .auth-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .auth-form-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo img {
+            height: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .auth-logo h1 {
+            color: var(--primary-green);
+            font-size: 1.8rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .auth-tab.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle .form-control {
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+        }
+
+        .forgot-password {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-google {
+            background-color: var(--white);
+            color: var(--text-primary);
+            border: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .btn-google:hover {
+            background-color: var(--light-gray);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .auth-divider span {
+            padding: 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .auth-footer a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Main App (Initially hidden) */
+        .main-app {
+            display: none;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        nav a:hover {
+            opacity: 0.9;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--white);
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+            color: var(--white);
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+            background-color: var(--white);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--secondary-green);
+        }
+
+        .section-title p {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--light-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary-green);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark-green);
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 4rem 0;
+            background-color: var(--light-gray);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+            gap: 1rem;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 0 1rem;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            opacity: 0.5;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-green);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .step h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--dark-green);
+        }
+
+        /* Disease Examples Section */
+        .disease-examples {
+            padding: 4rem 0;
+            background-color: var(--white);
+        }
+
+        .examples-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .example-card {
+            background-color: var(--light-gray);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .example-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .example-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .example-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .example-card:hover .example-image img {
+            transform: scale(1.05);
+        }
+
+        .example-content {
+            padding: 1.5rem;
+        }
+
+        .example-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-green);
+        }
+
+        .example-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--warning-red);
+            color: var(--white);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .healthy .example-tag {
+            background-color: var(--primary-green);
+        }
+
+        /* Disease Reporting Section */
+        .report-section {
+            padding: 4rem 0;
+            background-color: var(--white);
+        }
+
+        .report-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .report-image {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .report-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .report-form {
+            background-color: var(--light-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .radio-option input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-green);
+            background-color: rgba(46, 125, 50, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        #filePreview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            background-color: var(--warning-red);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .preview-item:hover .remove-btn {
+            opacity: 1;
+        }
+
+        .severity-scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+
+        .severity-level {
+            text-align: center;
+            flex: 1;
+        }
+
+        .severity-level input {
+            margin-bottom: 0.25rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 4rem 0;
+            background-color: var(--light-gray);
+        }
+
+        .results-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagnosis-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .diagnosis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .diagnosis-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+
+        .confidence-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .confidence-meter {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .confidence-level {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+            border-radius: 5px;
+        }
+
+        .treatment {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .treatment h4 {
+            margin-bottom: 1rem;
+            color: var(--dark-green);
+        }
+
+        .treatment-steps {
+            padding-left: 1.5rem;
+        }
+
+        .treatment-steps li {
+            margin-bottom: 0.5rem;
+        }
+
+        .expert-connect {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        /* Disease Map Section */
+        .disease-map {
+            padding: 4rem 0;
+            background-color: var(--white);
+        }
+
+        .map-container {
+            height: 500px;
+            background-color: #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 2rem;
+            position: relative;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 4rem 0;
+            background-color: var(--light-gray);
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 2rem auto 0;
+            position: relative;
+        }
+
+        .testimonial {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .testimonial-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--primary-green);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .testimonial-text::before,
+        .testimonial-text::after {
+            content: '"';
+            font-size: 2rem;
+            color: var(--primary-green);
+            opacity: 0.3;
+            position: absolute;
+        }
+
+        .testimonial-text::before {
+            top: -15px;
+            left: -10px;
+        }
+
+        .testimonial-text::after {
+            bottom: -25px;
+            right: -10px;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-role {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-gray);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo img {
+            height: 40px;
+        }
+
+        .footer-about p {
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .footer-links h3 {
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-links h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-green);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary-green);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-green);
+            transform: translateY(-3px);
+        }
+
+        .partners {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .partner-logo {
+            height: 40px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .partner-logo:hover {
+            opacity: 1;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Responsive Styles */
+        @media (min-width: 992px) {
+            .auth-left {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-menu {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+
+            .step {
+                margin-bottom: 2rem;
+            }
+
+            .report-container {
+                grid-template-columns: 1fr;
+            }
+
+            .report-image {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-form-container {
+                padding: 1.5rem;
+            }
+
+            .auth-tab {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-green);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Pages Container -->
+    <div class="auth-container" id="authContainer">
+        <!-- Left Side (Visual) -->
+        <div class="auth-left">
+            <div class="auth-left-content">
+                <h2>Welcome to FarmHealth AI</h2>
+                <p>Join thousands of farmers using our AI-powered disease diagnostic tool to protect their crops and livestock.</p>
+                
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <h4>AI-Powered Diagnosis</h4>
+                            <p>Get instant disease identification with our advanced machine learning models.</p>
+                        </div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div>
+                            <h4>Real-time Alerts</h4>
+                            <p>Receive notifications about disease outbreaks in your area.</p>
+                        </div>
+                    </div>
+                    <div class="auth-feature">
+                        <div class="auth-feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h4>Expert Recommendations</h4>
+                            <p>Get personalized treatment plans for your crops and livestock.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side (Forms) -->
+        <div class="auth-right">
+            <div class="auth-form-container animate-fade">
+                <div class="auth-logo">
+                    <img src="https://via.placeholder.com/50x50/2E7D32/FFFFFF?text=FA" alt="FarmHealth AI">
+                    <h1>FarmHealth AI</h1>
+                </div>
+
+                <div class="auth-tabs">
+                    <div class="auth-tab active" id="loginTab">Login</div>
+                    <div class="auth-tab" id="registerTab">Register</div>
+                </div>
+
+                <!-- Login Form -->
+                <form class="auth-form active" id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group password-toggle">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                        <i class="fas fa-eye toggle-password" id="toggleLoginPassword"></i>
+                    </div>
+                    <div class="remember-forgot">
+                        <div class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <label for="rememberMe">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <div class="auth-divider">
+                        <span>or</span>
+                    </div>
+                    <button type="button" class="btn btn-google">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
+                    <div class="auth-footer">
+                        Don't have an account? <a href="#" id="showRegister">Sign up</a>
+                    </div>
+                </form>
+
+                <!-- Register Form -->
+                <form class="auth-form" id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email Address</label>
+                        <input type="email" id="registerEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group password-toggle">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
+                        <i class="fas fa-eye toggle-password" id="toggleRegisterPassword"></i>
+                    </div>
+                    <div class="form-group password-toggle">
+                        <label for="registerConfirmPassword">Confirm Password</label>
+                        <input type="password" id="registerConfirmPassword" class="form-control" placeholder="Confirm your password" required>
+                        <i class="fas fa-eye toggle-password" id="toggleRegisterConfirmPassword"></i>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerUserType">I am a:</label>
+                        <select id="registerUserType" class="form-control" required>
+                            <option value="">Select user type</option>
+                            <option value="farmer">Farmer</option>
+                            <option value="agronomist">Agronomist</option>
+                            <option value="veterinarian">Veterinarian</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <label for="agreeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                    <div class="auth-divider">
+                        <span>or</span>
+                    </div>
+                    <button type="button" class="btn btn-google">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
+                    <div class="auth-footer">
+                        Already have an account? <a href="#" id="showLogin">Sign in</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application (Initially hidden) -->
+    <div class="main-app" id="mainApp">
+        <!-- Header -->
+        <header>
+            <div class="container header-container">
+                <div class="logo">
+                    <img src="https://via.placeholder.com/40x40/2E7D32/FFFFFF?text=FA" alt="FarmHealth AI Logo">
+                    <div class="logo-text">
+                        <h1>FarmHealth AI</h1>
+                        <p>Disease Diagnostic Portal</p>
+                    </div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#report"><i class="fas fa-bug"></i> Report Disease</a></li>
+                        <li><a href="#diseases"><i class="fas fa-seedling"></i> Disease Database</a></li>
+                        <li><a href="#alerts"><i class="fas fa-bell"></i> Alerts</a></li>
+                        <li><a href="#resources"><i class="fas fa-book"></i> Resources</a></li>
+                    </ul>
+                </nav>
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-content animate-fade">
+                    <h2>AI-Powered Crop Disease Detection</h2>
+                    <p>Identify plant diseases instantly with your smartphone and get expert treatment recommendations to protect your crops</p>
+                    <div class="hero-buttons">
+                        <a href="#report" class="btn btn-primary"><i class="fas fa-bug"></i> Report Disease Now</a>
+                        <a href="#how-it-works" class="btn btn-secondary"><i class="fas fa-play-circle"></i> How It Works</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Key Features</h2>
+                    <p>Our portal provides comprehensive tools to help farmers identify and manage diseases effectively</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card animate-fade" style="animation-delay: 0.1s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>AI Diagnosis</h3>
+                        <p>Upload photos for instant analysis and accurate disease identification using our advanced machine learning models</p>
+                    </div>
+                    <div class="feature-card animate-fade" style="animation-delay: 0.2s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3>Expert Alerts</h3>
+                        <p>Get real-time notifications when critical diseases are detected in your area or on your farm</p>
+                    </div>
+                    <div class="feature-card animate-fade" style="animation-delay: 0.3s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Prevention Tips</h3>
+                        <p>Receive personalized treatment plans and prevention measures tailored to your specific crop and disease</p>
+                    </div>
+                    <div class="feature-card animate-fade" style="animation-delay: 0.4s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3>Disease Map</h3>
+                        <p>Track disease outbreaks in your region and stay informed about emerging threats to your crops</p>
+                    </div>
+                    <div class="feature-card animate-fade" style="animation-delay: 0.5s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <h3>Multilingual</h3>
+                        <p>Available in multiple regional languages to ensure accessibility for all farmers</p>
+                    </div>
+                    <div class="feature-card animate-fade" style="animation-delay: 0.6s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                        <h3>Offline Mode</h3>
+                        <p>Works without internet connection in remote areas with limited connectivity</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-title">
+                    <h2>How It Works</h2>
+                    <p>Simple steps to get instant disease diagnosis for your crops</p>
+                </div>
+                <div class="steps">
+                    <div class="step animate-fade" style="animation-delay: 0.2s;">
+                        <div class="step-number">1</div>
+                        <h3>Capture</h3>
+                        <p>Take clear photos of disease symptoms on your crops or animals following our photography guidelines</p>
+                    </div>
+                    <div class="step animate-fade" style="animation-delay: 0.4s;">
+                        <div class="step-number">2</div>
+                        <h3>Upload</h3>
+                        <p>Submit your photos and details through our mobile app or web portal, even without internet</p>
+                    </div>
+                    <div class="step animate-fade" style="animation-delay: 0.6s;">
+                        <div class="step-number">3</div>
+                        <h3>Receive</h3>
+                        <p>Get immediate diagnosis, treatment recommendations, and prevention tips from our AI system</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disease Examples Section -->
+        <section class="disease-examples" id="diseases">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Common Disease Examples</h2>
+                    <p>Learn to recognize symptoms of prevalent crop diseases</p>
+                </div>
+                <div class="examples-container">
+                    <div class="example-card animate-fade" style="animation-delay: 0.1s;">
+                        <div class="example-image">
+                            <img src="https://images.unsplash.com/photo-1597848212624-a19eb35e2651?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Tomato Early Blight">
+                        </div>
+                        <div class="example-content">
+                            <h3>Tomato Early Blight</h3>
+                            <span class="example-tag">Fungal Disease</span>
+                            <p>Circular brown spots with concentric rings, usually starting on lower leaves</p>
+                        </div>
+                    </div>
+                    <div class="example-card animate-fade" style="animation-delay: 0.3s;">
+                        <div class="example-image">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ6pajoyeM4x0otrZa3E0WNVbDHWRJnQARAg&s" alt="Wheat Rust">
+                        </div>
+                        <div class="example-content">
+                            <h3>Wheat Rust</h3>
+                            <span class="example-tag">Fungal Disease</span>
+                            <p>Orange-red pustules on leaves and stems that release powdery spores</p>
+                        </div>
+                    </div>
+                    <div class="example-card healthy animate-fade" style="animation-delay: 0.5s;">
+                        <div class="example-image">
+                            <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Healthy Tomato Plant">
+                        </div>
+                        <div class="example-content">
+                            <h3>Healthy Tomato Plant</h3>
+                            <span class="example-tag">Healthy</span>
+                            <p>Vibrant green leaves without spots or discoloration for comparison</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disease Reporting Section -->
+        <section class="report-section" id="report">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Report a Disease</h2>
+                    <p>Upload images of your affected crops for instant diagnosis</p>
+                </div>
+                <div class="report-container">
+                    <div class="report-form animate-fade">
+                        <form id="disease-report-form">
+                            <div class="form-group">
+                                <label>I am a:</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="crop-farmer" name="user-type" value="crop" checked>
+                                        <label for="crop-farmer">Crop Farmer</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="livestock-farmer" name="user-type" value="livestock">
+                                        <label for="livestock-farmer">Livestock Farmer</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <input type="text" id="location" class="form-control" placeholder="Enter your location or click to detect automatically">
+                            </div>
+                            
+                            <div class="form-group" id="crop-group">
+                                <label for="crop-type">Crop Type</label>
+                                <select id="crop-type" class="form-control">
+                                    <option value="">Select crop type</option>
+                                    <option value="wheat">Wheat</option>
+                                    <option value="rice">Rice</option>
+                                    <option value="corn">Corn</option>
+                                    <option value="soybean">Soybean</option>
+                                    <option value="cotton">Cotton</option>
+                                    <option value="tomato">Tomato</option>
+                                    <option value="potato">Potato</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="animal-group" style="display: none;">
+                                <label for="animal-type">Animal Type</label>
+                                <select id="animal-type" class="form-control">
+                                    <option value="">Select animal type</option>
+                                    <option value="cattle">Cattle</option>
+                                    <option value="poultry">Poultry</option>
+                                    <option value="goat">Goat</option>
+                                    <option value="sheep">Sheep</option>
+                                    <option value="pig">Pig</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="symptoms">Symptoms Description</label>
+                                <textarea id="symptoms" class="form-control" rows="4" placeholder="Describe the symptoms you're observing (optional)"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Upload Photos</label>
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div class="upload-text">Click to upload or drag and drop</div>
+                                    <div class="upload-hint">Clear photos of the affected area help with accurate diagnosis</div>
+                                    <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+                                </div>
+                                <div id="filePreview"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="severity">Severity</label>
+                                <input type="range" id="severity" min="1" max="5" value="3" class="form-control">
+                                <div class="severity-scale">
+                                    <div class="severity-level">
+                                        <input type="radio" name="severity-level" id="level-1" value="1">
+                                        <label for="level-1">Mild</label>
+                                    </div>
+                                    <div class="severity-level">
+                                        <input type="radio" name="severity-level" id="level-2" value="2">
+                                        <label for="level-2">Moderate</label>
+                                    </div>
+                                    <div class="severity-level">
+                                        <input type="radio" name="severity-level" id="level-3" value="3" checked>
+                                        <label for="level-3">Average</label>
+                                    </div>
+                                    <div class="severity-level">
+                                        <input type="radio" name="severity-level" id="level-4" value="4">
+                                        <label for="level-4">Severe</label>
+                                    </div>
+                                    <div class="severity-level">
+                                        <input type="radio" name="severity-level" id="level-5" value="5">
+                                        <label for="level-5">Critical</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary submit-btn" id="analyzeBtn" disabled>
+                                <span id="submitText">Analyze Image</span>
+                                <div class="loading-spinner" id="submitSpinner" style="display: none;"></div>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="report-image animate-fade" style="animation-delay: 0.2s;">
+                        <img src="https://www.mobindustry.net/wp-content/uploads/1539586765146186b72d2e9.jpg" alt="Farmer using app">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section (Initially hidden) -->
+        <section class="results-section" id="results" style="display: none;">
+            <div class="container">
+                <div class="results-container">
+                    <div class="results-header">
+                        <h2>Analysis Results</h2>
+                        <p>Our AI has analyzed your images and found the following potential issues</p>
+                    </div>
+                    <div id="resultsContent"></div>
+                    <div class="expert-connect">
+                        <p>Need more help? Connect with an agricultural expert</p>
+                        <a href="#" class="btn btn-primary"><i class="fas fa-user-md"></i> Chat with Expert</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disease Map Section -->
+        <section class="disease-map" id="alerts">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Disease Alert Map</h2>
+                    <p>Track disease outbreaks in your region</p>
+                </div>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <div>
+                            <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <p>Interactive disease map showing outbreaks in your area</p>
+                        </div>
+                    </div>
+                    <div class="map-legend">
+                        <h4>Disease Severity</h4>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #4CAF50;"></div>
+                            <span>Low</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #FFC107;"></div>
+                            <span>Medium</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #F44336;"></div>
+                            <span>High</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
+            <div class="container">
+                <div class="section-title">
+                    <h2>What Farmers Say</h2>
+                    <p>Success stories from farmers using our diagnostic tool</p>
+                </div>
+                <div class="testimonial-slider">
+                    <div class="testimonial animate-fade">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Farmer" class="testimonial-avatar">
+                        <div class="testimonial-text">
+                            This app saved my tomato crop last season. I was able to identify early blight before it spread and treated it in time. The treatment recommendations were easy to follow and worked perfectly.
+                        </div>
+                        <div class="testimonial-author">Priya Sharma</div>
+                        <div class="testimonial-role">Tomato Farmer, Maharashtra</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-container">
+                    <div class="footer-col">
+                        <div class="footer-logo">
+                            <img src="https://via.placeholder.com/150x50/FFFFFF/2E7D32?text=FarmHealth+AI" alt="FarmHealth AI">
+                        </div>
+                        <div class="footer-about">
+                            <p>Empowering farmers with AI-powered disease diagnosis and prevention tools to improve agricultural productivity and food security.</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-youtube"></i></a>
+                                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <div class="footer-links">
+                            <h3>Quick Links</h3>
+                            <ul>
+                                <li><a href="#home">Home</a></li>
+                                <li><a href="#report">Report Disease</a></li>
+                                <li><a href="#diseases">Disease Database</a></li>
+                                <li><a href="#alerts">Alerts</a></li>
+                                <li><a href="#resources">Resources</a></li>
+                                <li><a href="#">About Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <div class="footer-links">
+                            <h3>Support</h3>
+                            <ul>
+                                <li><a href="#">Help Center</a></li>
+                                <li><a href="#">FAQs</a></li>
+                                <li><a href="#">Contact Us</a></li>
+                                <li><a href="#">Feedback</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <div class="footer-links">
+                            <h3>Partners</h3>
+                            <div class="partners">
+                                <img src="https://via.placeholder.com/100x40/FFFFFF/2E7D32?text=GovAgri" alt="Government Agriculture" class="partner-logo">
+                                <img src="https://via.placeholder.com/100x40/FFFFFF/2E7D32?text=AgriTech" alt="AgriTech" class="partner-logo">
+                                <img src="https://via.placeholder.com/100x40/FFFFFF/2E7D32?text=FarmersOrg" alt="Farmers Organization" class="partner-logo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2023 FarmHealth AI. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const authContainer = document.getElementById('authContainer');
+        const mainApp = document.getElementById('mainApp');
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const showRegister = document.getElementById('showRegister');
+        const showLogin = document.getElementById('showLogin');
+        const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+        const toggleRegisterPassword = document.getElementById('toggleRegisterPassword');
+        const toggleRegisterConfirmPassword = document.getElementById('toggleRegisterConfirmPassword');
+        const loginPassword = document.getElementById('loginPassword');
+        const registerPassword = document.getElementById('registerPassword');
+        const registerConfirmPassword = document.getElementById('registerConfirmPassword');
+        const userAvatar = document.getElementById('userAvatar');
+        const diseaseReportForm = document.getElementById('disease-report-form');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const submitText = document.getElementById('submitText');
+        const submitSpinner = document.getElementById('submitSpinner');
+        const resultsSection = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+        const fileInput = document.getElementById('fileInput');
+        const filePreview = document.getElementById('filePreview');
+        const uploadArea = document.getElementById('uploadArea');
+
+        // Switch between login and register forms
+        showRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginTab.classList.remove('active');
+            registerTab.classList.add('active');
+            loginForm.classList.remove('active');
+            registerForm.classList.add('active');
+        });
+
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerTab.classList.remove('active');
+            loginTab.classList.add('active');
+            registerForm.classList.remove('active');
+            loginForm.classList.add('active');
+        });
+
+        // Toggle password visibility
+        toggleLoginPassword.addEventListener('click', () => {
+            const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            loginPassword.setAttribute('type', type);
+            toggleLoginPassword.classList.toggle('fa-eye-slash');
+        });
+
+        toggleRegisterPassword.addEventListener('click', () => {
+            const type = registerPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            registerPassword.setAttribute('type', type);
+            toggleRegisterPassword.classList.toggle('fa-eye-slash');
+        });
+
+        toggleRegisterConfirmPassword.addEventListener('click', () => {
+            const type = registerConfirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            registerConfirmPassword.setAttribute('type', type);
+            toggleRegisterConfirmPassword.classList.toggle('fa-eye-slash');
+        });
+
+        // Form submissions
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In a real app, you would validate and send to your backend
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Simulate successful login
+            simulateLogin(email);
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In a real app, you would validate and send to your backend
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const userType = document.getElementById('registerUserType').value;
+            
+            // Check if passwords match
+            if (password !== document.getElementById('registerConfirmPassword').value) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Simulate successful registration and login
+            simulateLogin(email, name);
+        });
+
+        // File upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4CAF50';
+            uploadArea.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#ccc';
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ccc';
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect(e.dataTransfer.files);
+            }
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFileSelect(fileInput.files);
+            }
+        });
+        
+        function handleFileSelect(files) {
+            filePreview.innerHTML = '';
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                if (!file.type.match('image.*')) {
+                    alert('Please select only image files (JPEG, PNG)');
+                    return;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size should be less than 5MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.addEventListener('click', () => {
+                        filePreview.removeChild(previewItem);
+                        if (filePreview.children.length === 0) {
+                            analyzeBtn.disabled = true;
+                        }
+                    });
+                    
+                    previewItem.appendChild(img);
+                    previewItem.appendChild(removeBtn);
+                    filePreview.appendChild(previewItem);
+                    
+                    analyzeBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Disease report form submission
+        diseaseReportForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            submitText.style.display = 'none';
+            submitSpinner.style.display = 'block';
+            analyzeBtn.disabled = true;
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Hide loading state
+            submitText.style.display = 'block';
+            submitSpinner.style.display = 'none';
+            
+            // Display results (simulated data)
+            displayResults(getSimulatedResults());
+            
+            // Show results section
+            resultsSection.style.display = 'block';
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Simulate login (in a real app, this would be an API call)
+        function simulateLogin(email, name = 'John Doe') {
+            // Hide auth container, show main app
+            authContainer.style.display = 'none';
+            mainApp.style.display = 'block';
+            
+            // Set user avatar initials
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            userAvatar.textContent = initials;
+            
+            // In a real app, you would:
+            // 1. Store the authentication token
+            // 2. Fetch user data
+            // 3. Set up the authenticated state
+        }
+
+        function getSimulatedResults() {
+            // This is just sample data - in a real app, this would come from your AI model
+            const cropType = document.getElementById('crop-type').value || 'tomato';
+            
+            const diseaseData = {
+                'tomato': [
+                    {
+                        disease: "Tomato Early Blight",
+                        confidence: 0.87,
+                        description: "Early blight is a common fungal disease that affects tomatoes, causing concentric rings on leaves that may have a 'target' appearance. The disease thrives in warm, humid conditions.",
+                        treatment: [
+                            "Remove and destroy affected leaves immediately to prevent spread",
+                            "Apply copper-based fungicides every 7-10 days",
+                            "Improve air circulation by proper plant spacing",
+                            "Water at the base of plants to keep foliage dry",
+                            "Rotate crops next season to non-solanaceous plants",
+                            "Apply mulch to prevent soil splash onto leaves"
+                        ]
+                    },
+                    {
+                        disease: "Tomato Septoria Leaf Spot",
+                        confidence: 0.65,
+                        description: "Septoria leaf spot appears as small, circular spots with gray centers and dark edges. The disease spreads rapidly in wet conditions.",
+                        treatment: [
+                            "Apply fungicides containing chlorothalonil or mancozeb",
+                            "Remove infected leaves carefully to avoid spreading spores",
+                            "Avoid overhead watering to reduce leaf wetness",
+                            "Sterilize pruning tools between plants with 10% bleach solution",
+                            "Destroy infected plant material at season end (do not compost)"
+                        ]
+                    }
+                ],
+                'wheat': [
+                    {
+                        disease: "Wheat Rust",
+                        confidence: 0.92,
+                        description: "Rust appears as orange-red pustules on leaves and stems that release powdery spores. Severe infections can cause significant yield loss.",
+                        treatment: [
+                            "Apply fungicides at first sign of disease",
+                            "Plant resistant varieties in future seasons",
+                            "Avoid excessive nitrogen fertilization",
+                            "Remove volunteer wheat plants that may harbor the disease"
+                        ]
+                    }
+                ],
+                'default': [
+                    {
+                        disease: "Healthy Plant",
+                        confidence: 0.95,
+                        description: "No significant disease symptoms detected. Your plant appears to be healthy and thriving.",
+                        treatment: [
+                            "Continue current care practices",
+                            "Monitor regularly for early signs of disease",
+                            "Maintain proper spacing for air circulation",
+                            "Follow recommended fertilization schedule"
+                        ]
+                    }
+                ]
+            };
+            
+            return {
+                predictions: diseaseData[cropType] || diseaseData['default'],
+                healthyProbability: cropType === 'default' ? 0.95 : 0.15
+            };
+        }
+        
+        function displayResults(results) {
+            resultsContent.innerHTML = '';
+            
+            if (results.healthyProbability > 0.5) {
+                resultsContent.innerHTML = `
+                    <div class="diagnosis-card">
+                        <div class="diagnosis-header">
+                            <h3 class="diagnosis-name">Healthy Plant</h3>
+                            <div class="confidence-value">${Math.round(results.healthyProbability * 100)}% confidence</div>
+                        </div>
+                        <div class="confidence-meter">
+                            <div class="confidence-level" style="width: ${Math.round(results.healthyProbability * 100)}%"></div>
+                        </div>
+                        <p>No significant disease symptoms detected. Your plant appears to be healthy and thriving.</p>
+                        
+                        <div class="treatment">
+                            <h4>Recommendations</h4>
+                            <ul class="treatment-steps">
+                                <li>Continue current care practices</li>
+                                <li>Monitor regularly for early signs of disease</li>
+                                <li>Maintain proper spacing for air circulation</li>
+                                <li>Follow recommended fertilization schedule</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort predictions by confidence (highest first)
+            results.predictions.sort((a, b) => b.confidence - a.confidence);
+            
+            // Display top predictions
+            results.predictions.slice(0, 2).forEach(prediction => {
+                const confidencePercent = Math.round(prediction.confidence * 100);
+                
+                const treatmentList = prediction.treatment.map(item => `<li>${item}</li>`).join('');
+                
+                resultsContent.innerHTML += `
+                    <div class="diagnosis-card">
+                        <div class="diagnosis-header">
+                            <h3 class="diagnosis-name">${prediction.disease}</h3>
+                            <div class="confidence-value">${confidencePercent}% confidence</div>
+                        </div>
+                        <div class="confidence-meter">
+                            <div class="confidence-level" style="width: ${confidencePercent}%"></div>
+                        </div>
+                        <p>${prediction.description}</p>
+                        
+                        <div class="treatment">
+                            <h4>Recommended Treatment</h4>
+                            <ul class="treatment-steps">
+                                ${treatmentList}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Toggle between crop and livestock forms
+        document.querySelectorAll('input[name="user-type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'crop') {
+                    document.getElementById('crop-group').style.display = 'block';
+                    document.getElementById('animal-group').style.display = 'none';
+                } else {
+                    document.getElementById('crop-group').style.display = 'none';
+                    document.getElementById('animal-group').style.display = 'block';
+                }
+            });
+        });
+
+        // Update severity radio buttons when slider changes
+        document.getElementById('severity').addEventListener('input', function() {
+            const value = parseInt(this.value);
+            document.querySelector(`input[name="severity-level"][value="${value}"]`).checked = true;
+        });
+        
+        // Update slider when radio buttons change
+        document.querySelectorAll('input[name="severity-level"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('severity').value = this.value;
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Animation on scroll
+        const animateElements = document.querySelectorAll('.animate-fade');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        animateElements.forEach(element => {
+            element.style.opacity = 0;
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(element);
+        });
+
+        // For demo purposes, check if we should show auth or main app
+        // In a real app, you would check authentication state
+        const isLoggedIn = false; // Change to true to skip login for demo
+        
+        if (isLoggedIn) {
+            authContainer.style.display = 'none';
+            mainApp.style.display = 'block';
+            userAvatar.textContent = 'JD';
+        } else {
+            authContainer.style.display = 'flex';
+            mainApp.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
